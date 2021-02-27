@@ -8,9 +8,13 @@
       placeholder="Filtre pelo título"
     />
     <ul class="lista-fotos">
-      <li class="lista-fotos-item" v-for="foto of fotosComFiltro" :key="foto.url">
+      <li
+        class="lista-fotos-item"
+        v-for="foto of fotosComFiltro"
+        :key="foto.url"
+      >
         <meu-painel :titulo="foto.titulo">
-          <img class="imagem-responsiva" :src="foto.url" :alt="foto.titulo" />
+          <imagem-responsiva :url="foto.url" :titulo="foto.titulo" />
         </meu-painel>
       </li>
     </ul>
@@ -19,10 +23,12 @@
 
 <script>
 import Painel from "./components/shared/painel/Painel.vue";
+import ImagemResponsiva from "./components/shared/painel/imagem-responsiva/ImagemResponsiva.vue";
 
 export default {
   components: {
-    "meu-painel": Painel
+    "meu-painel": Painel,
+    "imagem-responsiva": ImagemResponsiva
   },
   data() {
     return {
@@ -32,9 +38,9 @@ export default {
     };
   },
   computed: {
-    fotosComFiltro(){
-      if(this.filtro) {
-        let exp = new RegExp(this.filtro.trim(), 'i');
+    fotosComFiltro() {
+      if (this.filtro) {
+        let exp = new RegExp(this.filtro.trim(), "i");
         return this.fotos.filter(foto => exp.test(foto.titulo));
       } else {
         return this.fotos;
@@ -70,10 +76,6 @@ export default {
 
 .lista-fotos .lista-fotos-item {
   display: inline-block;
-}
-
-.imagem-responsiva {
-  width: 100%;
 }
 
 .filtro {
