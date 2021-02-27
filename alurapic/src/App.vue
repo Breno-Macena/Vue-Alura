@@ -1,29 +1,46 @@
 <template>
   <div class="corpo">
-
-<div class="painel">
-  <h2 class="painel-titulo"></h2>
-  <div class="painel-conteudo"></div>
-</div>
-
     <h1 class="centralizado">{{ titulo }}</h1>
+    <input
+      type="search"
+      class="filtro"
+      @input="filtro = $event.target.value"
+      placeholder="Filtre pelo título"
+    />
     <ul class="lista-fotos">
-      <li class="lista-fotos-item" v-for="foto of fotos" :key="foto.url">
-        <img :src="foto.url" :alt="foto.titulo" />
+      <li class="lista-fotos-item" v-for="foto of fotosComFiltro" :key="foto.url">
+        <meu-painel :titulo="foto.titulo">
+          <img class="imagem-responsiva" :src="foto.url" :alt="foto.titulo" />
+        </meu-painel>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import Painel from "./components/shared/painel/Painel.vue";
+
 export default {
+  components: {
+    "meu-painel": Painel
+  },
   data() {
     return {
       titulo: "Alurapic",
-      fotos: []
+      fotos: [],
+      filtro: ""
     };
   },
-
+  computed: {
+    fotosComFiltro(){
+      if(this.filtro) {
+        let exp = new RegExp(this.filtro.trim(), 'i');
+        return this.fotos.filter(foto => exp.test(foto.titulo));
+      } else {
+        return this.fotos;
+      }
+    }
+  },
   created() {
     this.$http
       .get("http://localhost:3000/v1/fotos")
@@ -37,21 +54,30 @@ export default {
 </script>
 
 <style>
-  .corpo {
-    font-family: Helvetica;
-    width: 96%;
-    margin: 0 auto;
-  }
+.corpo {
+  font-family: Helvetica;
+  width: 96%;
+  margin: 0 auto;
+}
 
-  .centralizado {
-    text-align: center;
-  }
+.centralizado {
+  text-align: center;
+}
 
-  .lista-fotos {
-    list-style: none;
-  }
+.lista-fotos {
+  list-style: none;
+}
 
-  .lista-fotos .lista-fotos-item {
-    display: inline-block;
-  }
+.lista-fotos .lista-fotos-item {
+  display: inline-block;
+}
+
+.imagem-responsiva {
+  width: 100%;
+}
+
+.filtro {
+  display: block;
+  width: 100%;
+}
 </style>
