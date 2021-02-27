@@ -1,8 +1,14 @@
 <template>
-  <div>
-    <h1>{{ titulo }}</h1>
-    <ul>
-      <li v-for="foto of fotos" :key="foto.url">
+  <div class="corpo">
+
+<div class="painel">
+  <h2 class="painel-titulo"></h2>
+  <div class="painel-conteudo"></div>
+</div>
+
+    <h1 class="centralizado">{{ titulo }}</h1>
+    <ul class="lista-fotos">
+      <li class="lista-fotos-item" v-for="foto of fotos" :key="foto.url">
         <img :src="foto.url" :alt="foto.titulo" />
       </li>
     </ul>
@@ -30,4 +36,22 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+  .corpo {
+    font-family: Helvetica;
+    width: 96%;
+    margin: 0 auto;
+  }
+
+  .centralizado {
+    text-align: center;
+  }
+
+  .lista-fotos {
+    list-style: none;
+  }
+
+  .lista-fotos .lista-fotos-item {
+    display: inline-block;
+  }
+</style>
