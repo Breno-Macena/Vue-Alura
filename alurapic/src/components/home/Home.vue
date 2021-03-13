@@ -15,7 +15,13 @@
       >
         <meu-painel :titulo="foto.titulo">
           <imagem-responsiva :url="foto.url" :titulo="foto.titulo" />
-          <meu-botao tipo="button" rotulo="Remover" @botaoAtivado="remove(foto)" />
+          <meu-botao
+            tipo="button"
+            rotulo="Remover"
+            :confirmacao="true"
+            estilo="perigo"
+            @botaoAtivado="remove(foto)"
+          />
         </meu-painel>
       </li>
     </ul>
@@ -32,7 +38,7 @@ export default {
   components: {
     "meu-painel": Painel,
     "imagem-responsiva": ImagemResponsiva,
-    'meu-botao': Botao
+    "meu-botao": Botao
   },
   // dados que esse componente usa
   data() {
@@ -55,8 +61,8 @@ export default {
   },
   // métodos que esse componente usa
   methods: {
-    remove(foto){
-      alert(`Foto removida! ${ foto.titulo }`);
+    remove(foto) {
+      alert(`Foto removida! ${foto.titulo}`);
     }
   },
   // função executada quando o componente é criado (vue lifecycle)
