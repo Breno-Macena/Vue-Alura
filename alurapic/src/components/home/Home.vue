@@ -15,6 +15,7 @@
       >
         <meu-painel :titulo="foto.titulo">
           <imagem-responsiva :url="foto.url" :titulo="foto.titulo" />
+          <meu-botao tipo="button" rotulo="Remover" @botaoAtivado="remove(foto)" />
         </meu-painel>
       </li>
     </ul>
@@ -24,12 +25,16 @@
 <script>
 import Painel from "../shared/painel/Painel.vue";
 import ImagemResponsiva from "../shared/painel/imagem-responsiva/ImagemResponsiva.vue";
+import Botao from "../shared/botao/Botao.vue";
 
 export default {
+  // componentes que esse componente usa
   components: {
     "meu-painel": Painel,
-    "imagem-responsiva": ImagemResponsiva
+    "imagem-responsiva": ImagemResponsiva,
+    'meu-botao': Botao
   },
+  // dados que esse componente usa
   data() {
     return {
       titulo: "Alurapic",
@@ -37,6 +42,7 @@ export default {
       filtro: ""
     };
   },
+  // funções (com retorno) que esse componente usa
   computed: {
     fotosComFiltro() {
       if (this.filtro) {
@@ -47,6 +53,13 @@ export default {
       }
     }
   },
+  // métodos que esse componente usa
+  methods: {
+    remove(foto){
+      alert(`Foto removida! ${ foto.titulo }`);
+    }
+  },
+  // função executada quando o componente é criado (vue lifecycle)
   created() {
     this.$http
       .get("http://localhost:3000/v1/fotos")
