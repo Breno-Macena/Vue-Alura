@@ -14,7 +14,12 @@
         :key="foto.url"
       >
         <meu-painel :titulo="foto.titulo">
-          <imagem-responsiva v-meu-transform.animate.reverse="15" :url="foto.url" :titulo="foto.titulo" />
+          <imagem-responsiva
+            v-meu-transform:rotate.animate.reverse="45"
+            v-hover-zoom-image="1.5"
+            :url="foto.url"
+            :titulo="foto.titulo"
+          />
           <meu-botao
             tipo="button"
             rotulo="Remover"
@@ -48,7 +53,7 @@ export default {
       filtro: ""
     };
   },
-  // funções (com retorno) que esse componente usa
+  // propriedade computadas (funções com retorno) que esse componente usa
   computed: {
     fotosComFiltro() {
       if (this.filtro) {
