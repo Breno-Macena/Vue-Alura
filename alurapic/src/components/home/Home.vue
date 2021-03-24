@@ -1,6 +1,8 @@
 <template>
   <div>
     <h1 class="centralizado">{{ titulo }}</h1>
+    <p v-show="mensagem" class="centralizado">{{ mensagem }}</p>
+
     <input
       type="search"
       class="filtro"
@@ -37,6 +39,7 @@
 import Painel from "../shared/painel/Painel.vue";
 import ImagemResponsiva from "../shared/painel/imagem-responsiva/ImagemResponsiva.vue";
 import Botao from "../shared/botao/Botao.vue";
+import FotoService from "../../domain/foto/FotoService";
 
 export default {
   // componentes que esse componente usa
@@ -50,7 +53,8 @@ export default {
     return {
       titulo: "Alurapic",
       fotos: [],
-      filtro: ""
+      filtro: "",
+      mensagem: ""
     };
   },
   // propriedade computadas (funções com retorno) que esse componente usa
@@ -67,18 +71,25 @@ export default {
   // métodos que esse componente usa
   methods: {
     remove(foto) {
-      alert(`Foto removida! ${foto.titulo}`);
+      this.service.deleta(foto._id)
+        .then(
+          () =>  { 
+            let indice = this.fotos.indexOf(foto);
+            this.fotos.splice(indice, 1);
+            this.mensagem = 'Foto removida com sucesso';
+          }, 
+          err => { 
+            console.log(err); 
+            this.mensagem = 'Não foi possível remover a foto';
+          });
     }
   },
   // função executada quando o componente é criado (vue lifecycle)
   created() {
-    this.$http
-      .get("http://localhost:3000/v1/fotos")
-      .then(res => res.json())
-      .then(
-        fotos => (this.fotos = fotos),
-        err => console.log(err)
-      );
+    this.service = new FotoService(this.$resource);
+    this.service
+      .lista()
+      .then(fotos => this.fotos = fotos, err => console.log(err));
   }
 };
 </script>
