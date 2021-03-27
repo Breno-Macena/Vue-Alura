@@ -22,6 +22,10 @@
             :url="foto.url"
             :titulo="foto.titulo"
           />
+          <router-link :to="{ name: 'altera', params: { id: foto._id } }">
+            <meu-botao tipo="button" rotulo="Alterar"></meu-botao>
+          </router-link>
+
           <meu-botao
             tipo="button"
             rotulo="Remover"
@@ -71,25 +75,23 @@ export default {
   // métodos que esse componente usa
   methods: {
     remove(foto) {
-      this.service.deleta(foto._id)
-        .then(
-          () =>  { 
-            let indice = this.fotos.indexOf(foto);
-            this.fotos.splice(indice, 1);
-            this.mensagem = 'Foto removida com sucesso';
-          }, 
-          err => { 
-            console.log(err); 
-            this.mensagem = 'Não foi possível remover a foto';
-          });
+      this.service.deleta(foto._id).then(
+        () => {
+          let indice = this.fotos.indexOf(foto);
+          this.fotos.splice(indice, 1);
+          this.mensagem = "Foto removida com sucesso";
+        },
+        err => this.mensagem = err.message
+      );
     }
   },
   // função executada quando o componente é criado (vue lifecycle)
   created() {
     this.service = new FotoService(this.$resource);
-    this.service
-      .lista()
-      .then(fotos => this.fotos = fotos, err => console.log(err));
+    this.service.lista().then(
+      fotos => (this.fotos = fotos),
+      err => this.mensagem = err.message
+    );
   }
 };
 </script>

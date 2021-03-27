@@ -3,6 +3,11 @@
     <h1 class="centralizado">Cadastro</h1>
     <h2 class="centralizado">{{ foto.titulo }}</h2>
 
+    <h3 v-if="foto._id" class="centralizado">Alterar</h3>
+    <h3 v-else class="centralizado">Cadastrar</h3>
+
+    <h4 class="centralizado" v-show="mensagem">{{ mensagem }}</h4>
+
     <form @submit.prevent="grava()">
       <div class="controle">
         <label for="titulo">TÍTULO</label>
@@ -48,7 +53,9 @@ export default {
 
   data() {
     return {
-      foto: new Foto()
+      foto: new Foto(),
+      id: this.$route.params.id,
+      mensagem: ''
     };
   },
 
@@ -56,14 +63,27 @@ export default {
     grava() {
       this.service.cadastra(this.foto)
         .then(
-          () => this.foto = new Foto(),
-          err => console.log(err)
+          () =>  {
+            if(this.id) this.$router.push({ name: 'home' });
+            else {
+              this.foto = new Foto();
+              this.mensagem = 'Foto cadastrada com sucesso!';
+            }
+          },
+          err => { 
+            console.log(err);
+            this.mensagem = this.id ? 'Erro ao alterar foto!' : 'Erro ao cadastrar foto!';
+          }
         );
     }
   },
 
   created () {
     this.service = new FotoService(this.$resource);
+    if (this.id) {
+      this.service.busca(this.id)
+        .then(foto => this.foto = foto);
+    }
   }
 };
 </script>
