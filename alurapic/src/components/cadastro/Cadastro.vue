@@ -7,35 +7,47 @@
     <h3 v-else class="centralizado">Cadastrar</h3>
 
     <h4 class="centralizado" v-show="mensagem">{{ mensagem }}</h4>
+    <!-- Observador de erros no formulário -->
+    <validationObserver v-slot="{ handleSubmit }">
+      <form @submit.prevent="handleSubmit(grava)">
+        <div class="controle">
+          <label for="titulo">TÍTULO</label>
+          <validation-provider rules="required|minmax:3,20" v-slot="{ errors }">
+            <input id="titulo" autocomplete="off" v-model.lazy="foto.titulo" />
+            <span class="erro">{{ errors[0] }}</span>
+          </validation-provider>
+        </div>
 
-    <form @submit.prevent="grava()">
-      <div class="controle">
-        <label for="titulo">TÍTULO</label>
-        <input id="titulo" autocomplete="off" v-model.lazy="foto.titulo" />
-      </div>
+        <div class="controle">
+          <label for="url">URL</label>
+          <validation-provider rules="required" v-slot="{ errors }">
+            <input id="url" autocomplete="off" v-model.lazy="foto.url" />
+            <span class="erro">{{ errors[0] }}</span>
+          </validation-provider>
+          <imagem-responsiva
+            v-show="foto.url"
+            :url="foto.url"
+            :titulo="foto.titulo"
+          />
+        </div>
 
-      <div class="controle">
-        <label for="url">URL</label>
-        <input id="url" autocomplete="off" v-model.lazy="foto.url" />
-        <imagem-responsiva v-show="foto.url" :url="foto.url" :titulo="foto.titulo" />
-      </div>
+        <div class="controle">
+          <label for="descricao">DESCRIÇÃO</label>
+          <textarea
+            id="descricao"
+            autocomplete="off"
+            v-model="foto.descricao"
+          ></textarea>
+        </div>
 
-      <div class="controle">
-        <label for="descricao">DESCRIÇÃO</label>
-        <textarea
-          id="descricao"
-          autocomplete="off"
-          v-model="foto.descricao"
-        ></textarea>
-      </div>
-
-      <div class="centralizado">
-        <meu-botao rotulo="GRAVAR" tipo="submit" />
-        <router-link :to="{ name: 'home' }"
-          ><meu-botao rotulo="VOLTAR" tipo="button"
-        /></router-link>
-      </div>
-    </form>
+        <div class="centralizado">
+          <meu-botao rotulo="GRAVAR" tipo="submit" />
+          <router-link :to="{ name: 'home' }"
+            ><meu-botao rotulo="VOLTAR" tipo="button"
+          /></router-link>
+        </div>
+      </form>
+    </validationObserver>
   </div>
 </template>
 
@@ -55,34 +67,38 @@ export default {
     return {
       foto: new Foto(),
       id: this.$route.params.id,
-      mensagem: ''
+      mensagem: ""
     };
   },
 
   methods: {
     grava() {
-      this.service.cadastra(this.foto)
-        .then(
-          () =>  {
-            if(this.id) this.$router.push({ name: 'home' });
-            else {
-              this.foto = new Foto();
-              this.mensagem = 'Foto cadastrada com sucesso!';
+      this.$validator.validateAll().then(success => {
+        if (success) {
+          this.service.cadastra(this.foto).then(
+            () => {
+              if (this.id) this.$router.push({ name: "home" });
+              else {
+                this.foto = new Foto();
+                this.mensagem = "Foto cadastrada com sucesso!";
+              }
+            },
+            err => {
+              console.log(err);
+              this.mensagem = this.id
+                ? "Erro ao alterar foto!"
+                : "Erro ao cadastrar foto!";
             }
-          },
-          err => { 
-            console.log(err);
-            this.mensagem = this.id ? 'Erro ao alterar foto!' : 'Erro ao cadastrar foto!';
-          }
-        );
+          );
+        }
+      });
     }
   },
 
-  created () {
+  created() {
     this.service = new FotoService(this.$resource);
     if (this.id) {
-      this.service.busca(this.id)
-        .then(foto => this.foto = foto);
+      this.service.busca(this.id).then(foto => (this.foto = foto));
     }
   }
 };
@@ -100,7 +116,7 @@ export default {
   font-weight: bold;
 }
 
-.controle label + input,
+.controle label + span > input,
 .controle textarea {
   width: 100%;
   font-size: inherit;
@@ -109,5 +125,9 @@ export default {
 
 .centralizado {
   text-align: center;
+}
+
+.erro {
+  color: red;
 }
 </style>
