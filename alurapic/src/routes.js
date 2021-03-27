@@ -1,5 +1,7 @@
 import Home from "./components/home/Home.vue";
-import Cadastro from "./components/cadastro/Cadastro.vue";
+// Carregamento preguiçoso (lazy loading) do módulo para evitar sobrecarga
+const Cadastro = () => System.import('./components/cadastro/Cadastro.vue').then(m => m.default);
+
 import NotFound from "./components/notfound/NotFound.vue"
 
 // define as rotas da aplicação
