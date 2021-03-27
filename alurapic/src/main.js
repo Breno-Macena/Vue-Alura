@@ -11,6 +11,8 @@ import './directives/Transform';
 // módulo para validação de formulários
 import { ValidationProvider, extend, ValidationObserver } from 'vee-validate';
 
+import 'bootstrap/dist/css/bootstrap.css'; // importando o bootstrap do node_modules (sem ./)
+
 Vue.use(VueResource); // registra o módulo para acesso à api
 Vue.http.options.root = 'http://localhost:3000'; // define a url base da api
 
